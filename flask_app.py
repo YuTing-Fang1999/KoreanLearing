@@ -9,4 +9,4 @@ def hello():
 
 
 if __name__ == '__main__':
-    app.run()  # 啟動伺服器
+    app.run(debug=True)  # 啟動伺服器
