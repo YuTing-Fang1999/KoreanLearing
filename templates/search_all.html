@@ -1,202 +1,229 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>韓語學習</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <link rel= "stylesheet" type= "text/css" href= "/static/css/header.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/header.css">
 </head>
 <script language="javascript">
-    function load_video_list(){
-        var res={{ data|tojson }};
+    function load_video_list() {
+        var res = {{ data | safe }};
         console.log(res);
-        if (res['channel_list'].length != 0){
+        if (res['channel_list'].length != 0) {
             $(".card").prepend('<div class="title"><p>頻道</p></div>');
-            var channel_list=res['channel_list']
-            for(var i=0;i<channel_list.length;++i){
+            var channel_list = res['channel_list']
+            for (var i = 0; i < channel_list.length; ++i) {
                 appendChannel(channel_list[i])
             }
         }
 
-        var video_list=res["video_list"]
+        var video_list = res["video_list"]
         console.log(video_list.length)
-        if(video_list.length==0) $('#video_block_title').text('找不到影片')
-        else{
-            for(var i=0;i<video_list.length;++i){
+        if (video_list.length == 0) $('#video_block_title').text('找不到影片')
+        else {
+            for (var i = 0; i < video_list.length; ++i) {
                 appendVideo(video_list[i])
             }
 
-            pageNo=2;
-            sOffset=res['sOffset']
-            query=res['query']
-            bLast=res['bLast']
+            pageNo = 2;
+            sOffset = res['sOffset']
+            query = res['query']
+            bLast = res['bLast']
             console.log(typeof bLast)
         }
     }
-    
-    function appendVideo(v)
-    {
-        var html=
-           `<div class="video_block">
+
+    function appendVideo(v) {
+        var html =
+            `<div class="video_block">
                 <a href="${v["video_href"]}">
                     <img class="cover" title="${v["video_title"]}" src="${v["img_src"]}"/>
                     <p class="subject" title="${v["video_title"]}">${v["video_title"]}</p>
                 </a>
                 <div class="video_date">
                     <span class="date">${v['date']}</span>
-                    <a href="/channels/${v['data_ga_seq']}" class="name">
+                    <p class="name">
                         ${v['channel_name']}
-                    </a>
+                    </p>
                 </div>
             </div>`;
-            
-        $("#video_section").append(html);        // 追加新元素
+
+        $("#video_section").append(html); // 追加新元素
     }
-    function appendChannel(c){
-        var html=
+
+    function appendChannel(c) {
+        var html =
             `<a class="channel_block" href="/channels/${c['data_ga_seq']}">
                 <img src="${c['channel_icon_src']}">
                 <span class="channel_name">${c['channel_name']}</span>
             </a>`
-        $("#channel_section").append(html);        // 追加新元素
-        
+        $("#channel_section").append(html); // 追加新元素
+
     }
-    window.onscroll = function() { 
-        if ($(window).scrollTop()+8 > $(document).height() - $(window).height()){ 
-            if(bLast=='true'){
+    function more_search(){
+if ($(window).scrollTop() + 8 > $(document).height() - $(window).height()) {
+            if (bLast == 'true') {
                 console.log('沒了');
                 return;
             }
-            console.log(pageNo,sOffset,query);
-            data={
-                    'pageNo':pageNo,
-                    'sOffset':sOffset,
-                    'query':query
+            console.log(pageNo, sOffset, query);
+            data = {
+                    'pageNo': pageNo,
+                    'sOffset': sOffset,
+                    'query': query
                 },
-            $.ajax({
-                url: "/search/more_videos",
-                type: "POST",
-                data:data,
-                success:function(res){
-                    console.log(res)
-                    video_list=res["video_list"]
+                $.ajax({
+                    url: "/search/more_videos",
+                    type: "POST",
+                    data: data,
+                    success: function(res) {
+                        console.log(res)
+                        video_list = res["video_list"]
 
-                    for(var i=0;i<video_list.length;++i){
-                        // console.log(video_list[i])
-                        appendVideo(video_list[i])
+                        for (var i = 0; i < video_list.length; ++i) {
+                            // console.log(video_list[i])
+                            appendVideo(video_list[i])
+                        }
+                        pageNo += 1;
+                        sOffset = res['sOffset']
+                        bLast = res['bLast']
+                    },
+                    error: function(res) {
+                        console.log(res)
                     }
-                    pageNo+=1;
-                    sOffset=res['sOffset']
-                    bLast=res['bLast']
-                },
-                error:function(res){
-                    console.log(res)
-                }
-            })
-        } 
-    }; 
-    
+                })
+        }
+    }
+    window.onscroll = function() {
+        more_search();
+    };
 </script>
 <style type="text/css">
-
-#video_section, #channel_section {
-    display: flex;
-    padding: 15px;
-    flex-wrap: wrap;
-}
-
-.video_block{
-  width: fit-content;
-  height: 200px;
-  position: relative;
-  margin: 5px;
-}
-
-.video_block .cover,.video_block .subject {
-  width: 200px;
-}
-.video_block .cover {
-  border: solid 1px gray;
-}
-.video_block .subject {
-    display: -webkit-box;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    max-height: 38px;
-    padding: 0px;
-    margin-bottom: 4px;
-    font-size: 13px;
-    line-height: 18px;
-    color: #000;
-    word-break: break-all;
-}
-.video_block a{
-  text-decoration:none;
-  color: black;
-  font-family: 微軟正黑體;
-}
-.video_date{
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    padding: 5px 0 0 2px;
-    font-size: 12px;
-}
-.video_date , .video_date .name{
-  width: 200px;
-  font-size:12px;
-  color: gray;
-  display: -webkit-box;
+    #video_section,
+    #channel_section {
+        display: flex;
+        padding: 15px;
+        flex-wrap: wrap;
+    }
     
-}
-.video_date .name::before {
-  display: inline-block;
-  width: 2px;
-  height: 12px;
-  margin: 3px 6px 0 5px;
-  background: #ccc;
-  content: '';
-  vertical-align: top;
-}
+    .video_block {
+        width: fit-content;
+        height: 200px;
+        position: relative;
+        margin: 5px;
+    }
+    
+    .video_block .cover,
+    .video_block .subject {
+        width: 200px;
+    }
+    
+    .video_block .cover {
+        border: solid 1px gray;
+    }
+    
+    .video_block .subject {
+        display: -webkit-box;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        max-height: 38px;
+        padding: 0px;
+        margin-bottom: 4px;
+        font-size: 13px;
+        line-height: 18px;
+        color: #000;
+        word-break: break-all;
+    }
+    
+    .video_block a {
+        text-decoration: none;
+        color: black;
+        font-family: 微軟正黑體;
+    }
+    
+    .video_date {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 5px 0 0 2px;
+        font-size: 12px;
+    }
+    
+    .video_date,
+    .video_date .name {
+        width: 200px;
+        font-size: 12px;
+        color: gray;
+        display: -webkit-box;
+    }
+    
+    .video_date .name::before {
+        display: inline-block;
+        width: 2px;
+        height: 12px;
+        margin: 3px 6px 0 5px;
+        background: #ccc;
+        content: '';
+        vertical-align: top;
+    }
+    
+    .channel_block {
+        text-decoration: none;
+        display: block;
+        border-radius: 26px 0px 0px 26px;
+        /*   border: 1px solid rgba(0,0,0,0.9); */
+        width: 200px;
+        height: 53px;
+        margin: 5px;
+        background-color: #8a7967;
+        text-align: center;
+    }
+    
+    .channel_block img {
+        position: relative;
+        border-radius: 50%;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        /* right: 70px; */
+        width: 52px;
+    }
+    
+    .channel_block .channel_name {
+        text-align: center;
+        display: inline-block;
+        height: 50px;
+        width: 135px;
+        /*   border: 1px solid black; */
+        font-family: 微軟正黑體;
+        color: #fff7e8;
+        bottom: 18px;
+        left: -10px;
+        font-size: 14px;
+        text-overflow: ellipsis;
+    }
+    
+    .card {
+        width: 900px;
+    }
 
-.channel_block{
-    text-decoration: none;
-  display: block;
-  border-radius: 26px 0px 0px 26px;
-/*   border: 1px solid rgba(0,0,0,0.9); */
-  width: 200px;
-  height: 53px;
-  margin: 5px;
-  background-color: #8a7967;
-  text-align: center;
-}
-.channel_block img {
-    position: relative;
-    border-radius: 50%;
-    border: 1px solid rgba(0,0,0,0.1);
-    /* right: 70px; */
-    width: 52px;
-}
-.channel_block .channel_name{
-  text-align: center;
-  display: inline-block;
-  height: 50px;
-  width: 135px;
-/*   border: 1px solid black; */
-  font-family: 微軟正黑體;
-  color: #fff7e8;
-  bottom: 18px;
-  left: -10px;
-  font-size:14px;
-  text-overflow: ellipsis;
-}
-.card {
-    width: 900px;
-}
+    .more_btn {
+        width: 100px;
+        height: 30px;
+        font-size:15px; 
+        font-family: 微軟正黑體;
+        cursor: pointer; 
+        position: relative;
+        top: 20px;
+        left: 50%;
+        transform: translate(-50%,-50%); 
+    }
+
 </style>
-<body onload="load_video_list()"> 
+
+<body onload="load_video_list()">
     <div id="header">
         <div class="navigation">
             <ul>
@@ -206,7 +233,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/channels/13">
+                    <a href="/channels/FE619">
                         <span>BTS</span>
                     </a>
                 </li>
@@ -220,8 +247,8 @@
     </div>
     <div class="searchBox">
         <form class="_searchForm" action="/search/all" method="get">
-          <input type="text" id="search_text" name="query" class="search_txt">
-          <input type="submit" id="btn_search2" class="btn_search">
+            <input type="text" id="search_text" name="query" class="search_txt">
+            <input type="submit" id="btn_search2" class="btn_search">
         </form>
     </div>
     <div id="search_all">
@@ -235,7 +262,10 @@
             </div>
             <div id="video_section"> </div>
         </div>
-        
+
     </div>
+    <button class="more_btn" onclick="more_search()">more</button>
+
 </body>
+
 </html>

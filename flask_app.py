@@ -1,17 +1,11 @@
 from flask import Flask, render_template, request, redirect,\
     url_for, redirect
-import os
-import shutil
-import json
+
 from crawl_data import *
 import sqlite3
 import requests as rq
 from langconv import Converter
-from bs4 import BeautifulSoup as bs
-from pytube import YouTube
 
-import soundfile as sf
-import librosa
 
 dbfile = "vlive.db"
 
@@ -35,8 +29,10 @@ def video(V_id):
     data = connect_video(V_id,
                          video_P=["720P"],
                          vtt_language=["ko_KR", "zh_TW", "en_US"])
+
     data['video_url'] = data["720P"]
     data['crossorigin'] = 1
+
     with sqlite3.connect("vlive.db") as conn:
         cur = conn.cursor()
         exist = cur.execute("SELECT EXISTS (SELECT 1 \
@@ -48,66 +44,6 @@ def video(V_id):
         else:
             data['favorite'] = 1
     # print(data)
-    return render_template("video.html", data=data)
-
-
-@app.route("/video/youtu/<V_id>", methods=['GET', 'POST'])
-def youtuVideo(V_id):
-    data = {}
-    url = 'https://www.youtube.com/watch?v='+V_id
-    # url="https://www.youtube.com/watch?v=gdZLi9oWNZg"
-    yt = YouTube(url)
-
-    if os.path.exists("static/download/youtuVideo"):
-        shutil.rmtree("static/download/youtuVideo")
-    vtt_language = ["ko"]  # "en"
-    code_list = []
-
-    for v in yt.captions:
-        code_list.append(v.code)
-    print(code_list)
-
-    data['zh_code'] = 'zh-TW'
-    if 'zh-TW' in code_list:
-        save_youtu_caption(yt.captions['zh-TW'], 'zh-TW', convert=False)
-        data['zh_code'] = 'zh-TW'
-
-    elif "zh" in code_list:
-        save_youtu_caption(yt.captions['zh'], 'zh', convert=True)
-        data['zh_code'] = 'zh'
-
-    elif 'zh-CN' in code_list:
-        save_youtu_caption(yt.captions['zh-CN'], 'zh-CN', convert=True)
-        data['zh_code'] = 'zh-CN'
-
-    vtt_language = list(set(vtt_language) & set(code_list))
-
-    for code in vtt_language:
-        save_youtu_caption(yt.captions[code], code, convert=False)
-
-    print(yt.streams.filter(progressive="True")[-1].url)
-
-    data['video_url'] = yt.streams.filter(progressive="True")[-1].url
-    data['subject'] = yt.title
-    data['img_url'] = yt.thumbnail_url
-    data['zh_TW'] = "/static/download/youtuVideo/{}.vtt".format(
-        data['zh_code'])
-    data['en_US'] = "/static/download/youtuVideo/en.vtt"
-    data['ko_KR'] = "/static/download/youtuVideo/ko.vtt"
-    data['V_id'] = 'youtu/'+V_id
-    data['crossorigin'] = 0
-
-    with sqlite3.connect("vlive.db") as conn:
-        cur = conn.cursor()
-        exist = cur.execute("SELECT EXISTS (SELECT 1 \
-                           FROM video_list \
-                           WHERE id=?\
-                           LIMIT 1)""", (data['V_id'], )).fetchone()[0]
-        if exist == 0:
-            data['favorite'] = 0
-        else:
-            data['favorite'] = 1
-
     return render_template("video.html", data=data)
 
 
@@ -167,7 +103,7 @@ def search_all():
         return redirect(url_for('video', V_id=spi))
 
     data = get_vlive_search_all(query)
-    return render_template("search_all.html", data=data)
+    return render_template("search_all.html", data=json.dumps(data))
 
 
 @app.route("/search/more_videos", methods=['GET', 'POST'])
@@ -186,9 +122,8 @@ def channels(ch_id):
 
 @app.route("/channels/more", methods=['GET', 'POST'])
 def get_vlive_web_more_channels():
-    # print(request.form.get('pageNo'),request.form.get('seq_num'))
-    data = more_channels(request.form.get('pageNo'),
-                         request.form.get('seq_num'))
+    data = more_channels(request.form.get('after'),
+                         request.form.get('ch_code'))
     return data
 
 
@@ -211,4 +146,5 @@ if __name__ == "__main__":
             # host='0.0.0.0',
             # port=10914,
             )
+
     app.jinja_env.auto_reload = True
