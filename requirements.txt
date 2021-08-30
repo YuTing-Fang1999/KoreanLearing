@@ -6,9 +6,3 @@ sqlite3
 datetime
 flask
 langconv
-copy
-psyco
-zh_wiki
-sys
-optparse
-zhtools
