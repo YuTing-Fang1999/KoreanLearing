@@ -1,6 +1,5 @@
 requests
 bs4
-sqlite3
 datetime
 flask
 langconv
