@@ -5,7 +5,8 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello():
-    return f'Hello, Heroku!'
+    return 'Hello, Heroku!'
 
-if __name__ == 'main__':
-    app.run() #啟動伺服器
+
+if __name__ == '__main__':
+    app.run()  # 啟動伺服器
