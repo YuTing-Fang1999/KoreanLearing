@@ -2,38 +2,7 @@ import requests as rq
 from bs4 import BeautifulSoup as bs
 import re
 import json
-import sqlite3
 import datetime
-
-
-def download_data_from_vlive(V_id):  # isConn,video_P,vtt_language
-    url = 'https://www.vlive.tv/video/'+V_id
-    html_json, subject = getJSON(url)
-    conn = sqlite3.connect("vlive.db")
-    cur = conn.cursor()
-
-    img_url = html_json["meta"]["cover"]["source"]
-
-    exist = cur.execute("SELECT EXISTS (SELECT 1 \
-                        FROM video_list \
-                        WHERE id=?\
-                        LIMIT 1)""", (V_id, )).fetchone()[0]
-    if exist == 0:
-        print("插入新row")
-        cur.execute('insert into video_list(id, subject, img_url)\
-                            values(?,?,?)', [V_id, subject, img_url])
-    conn.commit()
-    conn.close()
-
-
-def crawl_video_url(url):
-    html_json = getJSON(url)[0]
-    video_url = ""
-    video_list = html_json["videos"]["list"]
-    for v in video_list:
-        if v["encodingOption"]["name"] == "720P":
-            video_url = v["source"]
-    return video_url
 
 
 def get_vlive_search_all(query):
