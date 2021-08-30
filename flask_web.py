@@ -10,13 +10,12 @@ from langconv import Converter
 dbfile = "vlive.db"
 
 app = Flask(__name__)
-# app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
     return redirect(url_for('home'))
-    # return "hello"
 
 
 @app.route("/home", methods=['GET', 'POST'])
@@ -115,13 +114,13 @@ def get_vlive_web_more_videos():
     return data
 
 
-@app.route("/channels/<ch_id>", methods=['GET', 'POST'])
-def channels(ch_id):
-    data = get_vlive_channel(ch_id)
+@app.route("/channel/<ch_code>", methods=['GET', 'POST'])
+def channels(ch_code):
+    data = get_vlive_channel(ch_code)
     return render_template("channel.html", data=data)
 
 
-@app.route("/channels/more", methods=['GET', 'POST'])
+@app.route("/channel/more", methods=['GET', 'POST'])
 def get_vlive_web_more_channels():
     data = more_channels(request.form.get('after'),
                          request.form.get('ch_code'))
@@ -148,4 +147,4 @@ if __name__ == "__main__":
             # port=10914,
             )
 
-    # app.jinja_env.auto_reload = True
+    app.jinja_env.auto_reload = True

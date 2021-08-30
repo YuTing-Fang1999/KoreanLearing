@@ -47,7 +47,7 @@
 
     }
 
-    function more_channel(){
+    function more_channel() {
         //console.log($(window).scrollTop() + 8);
         //console.log($(document).height() - $(window).height());
         if (!wait && $(window).scrollTop() + 8 > $(document).height() - $(window).height()) {
@@ -59,7 +59,7 @@
                     'ch_code': ch_code
                 },
                 $.ajax({
-                    url: "/channels/more",
+                    url: "/channel/more",
                     type: "POST",
                     data: data,
                     success: function(res) {
@@ -75,7 +75,7 @@
                         console.log('update');
 
                         console.log(after);
-                        wait=false
+                        wait = false
 
                     },
                     error: function(res) {
@@ -93,7 +93,6 @@
     html,
     body {
         position: relative;
-
         /* background-color: white; */
     }
     
@@ -180,17 +179,17 @@
         /* font-size:15px; */
         font-family: 微軟正黑體;
     }
-
+    
     .more_btn {
         width: 100px;
         height: 30px;
-        font-size:15px; 
+        font-size: 15px;
         font-family: 微軟正黑體;
-        cursor: pointer; 
+        cursor: pointer;
         position: relative;
         top: 20px;
         left: 50%;
-        transform: translate(-50%,-50%); 
+        transform: translate(-50%, -50%);
     }
 </style>
 
@@ -204,7 +203,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/channels/FE619">
+                    <a href="/channel/FE619">
                         <span>BTS</span>
                     </a>
                 </li>

@@ -9,7 +9,7 @@
 </head>
 <script language="javascript">
     function load_video_list() {
-        var res = {{ data | safe }};
+        var res = {{data | safe }};
         console.log(res);
         if (res['channel_list'].length != 0) {
             $(".card").prepend('<div class="title"><p>頻道</p></div>');
@@ -44,9 +44,9 @@
                 </a>
                 <div class="video_date">
                     <span class="date">${v['date']}</span>
-                    <p class="name">
+                    <a href="${v['channel_href']}" class="name">
                         ${v['channel_name']}
-                    </p>
+                    </onAirStartAt>
                 </div>
             </div>`;
 
@@ -55,15 +55,16 @@
 
     function appendChannel(c) {
         var html =
-            `<a class="channel_block" href="/channels/${c['data_ga_seq']}">
+            `<a class="channel_block" href="${c['channel_href']}">
                 <img src="${c['channel_icon_src']}">
                 <span class="channel_name">${c['channel_name']}</span>
             </a>`
         $("#channel_section").append(html); // 追加新元素
 
     }
-    function more_search(){
-if ($(window).scrollTop() + 8 > $(document).height() - $(window).height()) {
+
+    function more_search() {
+        if ($(window).scrollTop() + 8 > $(document).height() - $(window).height()) {
             if (bLast == 'true') {
                 console.log('沒了');
                 return;
@@ -208,19 +209,18 @@ if ($(window).scrollTop() + 8 > $(document).height() - $(window).height()) {
     .card {
         width: 900px;
     }
-
+    
     .more_btn {
         width: 100px;
         height: 30px;
-        font-size:15px; 
+        font-size: 15px;
         font-family: 微軟正黑體;
-        cursor: pointer; 
+        cursor: pointer;
         position: relative;
         top: 20px;
         left: 50%;
-        transform: translate(-50%,-50%); 
+        transform: translate(-50%, -50%);
     }
-
 </style>
 
 <body onload="load_video_list()">
@@ -233,7 +233,7 @@ if ($(window).scrollTop() + 8 > $(document).height() - $(window).height()) {
                     </a>
                 </li>
                 <li>
-                    <a href="/channels/FE619">
+                    <a href="/channel/FE619">
                         <span>BTS</span>
                     </a>
                 </li>
