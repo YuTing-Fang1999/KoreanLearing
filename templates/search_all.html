@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="/static/css/header.css">
 </head>
 <script language="javascript">
+    wait = false
     function load_video_list() {
         var res = {{data | safe }};
         console.log(res);
@@ -64,7 +65,8 @@
     }
 
     function more_search() {
-        if ($(window).scrollTop() + 8 > $(document).height() - $(window).height()) {
+        if (!wait && $(window).scrollTop() + 8 > $(document).height() - $(window).height()) {
+            wait = true
             if (bLast == 'true') {
                 console.log('沒了');
                 return;
@@ -90,6 +92,7 @@
                         pageNo += 1;
                         sOffset = res['sOffset']
                         bLast = res['bLast']
+                        wait=false
                     },
                     error: function(res) {
                         console.log(res)
