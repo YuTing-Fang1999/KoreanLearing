@@ -187,6 +187,8 @@ def get_vlive_channel(ch_code):
             video_info = {}
             video_info['video_title'] = v['title']
             video_info['img_src'] = v['officialVideo']['thumb']
+            video_info['img_src'] = video_info['img_src'].replace(
+                "v.phinf.naver", "v-phinf.pstatic")+"?type=f228_128"
             video_info['play_time'] = str(datetime.timedelta(
                 seconds=v['officialVideo']['playTime']))
             video_info['onAirStartAt'] = datetime.datetime.fromtimestamp(
@@ -238,6 +240,8 @@ def more_channels(after, ch_code):
             video_info = {}
             video_info['video_title'] = v['title']
             video_info['img_src'] = v['officialVideo']['thumb']
+            video_info['img_src'] = video_info['img_src'].replace(
+                "v.phinf.naver", "v-phinf.pstatic")+"?type=f228_128"
             video_info['play_time'] = str(datetime.timedelta(
                 seconds=v['officialVideo']['playTime']))
             video_info['onAirStartAt'] = datetime.datetime.fromtimestamp(
