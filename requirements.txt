@@ -1,6 +1,5 @@
 requests
 bs4
-re
 json
 sqlite3
 datetime
