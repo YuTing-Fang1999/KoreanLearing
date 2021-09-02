@@ -35,7 +35,7 @@
             )
         }
         if ("{{data['favorite']}}" == 1) {
-            $('#favorite img').attr('src', 'https://www.flaticon.com/svg/static/icons/svg/3529/3529890.svg');
+            $('#favorite img').attr('src', "{{url_for('static', filename='img/star.png')}}");
             fav = true;
         } else {
             fav = false;
@@ -218,7 +218,7 @@
                         "img_url": "{{data['img_url']}}"
                     },
                     success: function() {
-                        $('#favorite img').attr('src', 'https://www.flaticon.com/svg/static/icons/svg/3529/3529890.svg');
+                        $('#favorite img').attr('src', '/static/img/star.png');
                         fav = true;
                     },
                     error: function() {
@@ -253,7 +253,7 @@
                 },
                 success: function(res) {
                     // console.log(res)
-                    $('#favorite img').attr('src', 'https://www.flaticon.com/svg/static/icons/svg/3529/3529899.svg');
+                    $('#favorite img').attr('src', '/static/img/unstar.png');
                 },
                 error: function(res) {
                     alert(res)
@@ -527,7 +527,7 @@
         width: 30px;
         margin-left: 5px;
         margin-right: 10px;
-        background-image: url(https://www.flaticon.com/svg/static/icons/svg/59/59284.svg);
+        background-image: url('/static/img/volume.png');
         background-size: 30px;
     }
     
@@ -618,7 +618,7 @@
                         <span id="speed_value">0.8</span>
                         </span>
                         <button id="favorite">
-                        <img src="https://www.flaticon.com/svg/static/icons/svg/3529/3529899.svg">
+                        <img src='/static/img/unstar.png'>
                         收藏
                         </button>
                     </div>
