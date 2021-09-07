@@ -204,10 +204,9 @@
 
         $('#favorite').click(function() {
             // $('#favorite').addClass('btn_on')
-            if (fav) { //取消收藏
+            if (fav) { //顯示取消收藏框
                 $('.dialog').css('display', 'block');
                 $('.dialog_bg').css('display', 'block');
-                fav = false;
             } else { //新增收藏
                 $.ajax({
                     url: '/add_to_my_video',
@@ -254,6 +253,7 @@
                 success: function(res) {
                     // console.log(res)
                     $('#favorite img').attr('src', '/static/img/unstar.png');
+                    fav = false;
                 },
                 error: function(res) {
                     alert(res)

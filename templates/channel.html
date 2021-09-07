@@ -9,7 +9,7 @@
 </head>
 <script language="javascript">
     function load_video_list() {
-        var res = {{data | tojson}};
+        var res = {{ data | tojson}};
 
         after = res['after'];
         ch_code = res['ch_code']
