@@ -47,9 +47,6 @@
 <img src="introduce_img/7.png" width="800">
 介紹影片: https://www.youtube.com/watch?v=Lz1-BlqCmuk  
 
-
-為了使用免費版的heroku(容量考量)且方便管理，目前架在上面的是無AI版本(AI版本在pupumeme的private裡)
-
 # Note
 Because of the revision of vlive, the crawler part cannot be connected at present.   
 I'll update when I'm free.  
